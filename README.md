@@ -1,7 +1,8 @@
-Contest Programming Skeleton
-============================
+Shaker
+======
 
-A quick directory structure for contest programming :smile:
+Shaker is a simple _checker_ script for competetive programmers. It compiles and checks your solution with only one command and provides
+a little structure to your workspace.
 
 What should be where?
 ---------------------
@@ -13,7 +14,7 @@ The directory structure is as follows,
 
 - `expected` directory contains the expected results for the respective test cases in `inputs` directory.
 
-- The `checker` is used as the build system. It is a python3 script.
+- The `shaker` is used as the build system. It is a python3 script.
 
 - `.editorconfig` file is for editorconfig plugin. Go [here](http://editorconfig.org/) for more info.
 
@@ -21,21 +22,21 @@ How do I use it?
 ----------------
 To compile and run a file you should write
 ```bash
-$ ./checker <solution>
+$ ./shaker <solution>
 ```
 
-It will compile the solution and keep it in `bin` folder which will be created via the `checker`
+It will compile the solution and keep it in `bin` folder which will be created via the `shaker`
 
 If you provide another argument `--expect` to the command like this,
 ```bash
-$ ./checker <solution> --expect
+$ ./shaker <solution> --expect
 ```
 
 then it will match the results of the solution to the expected result in `expected/<solution>.txt`
 
 If you want to get rid of the binaries run,
 ```bash
-$ ./checker --clean
+$ ./shaker --clean
 ```
 This will delete the `bin` folder.
 
@@ -48,16 +49,24 @@ Note that I have also put some examples in other languages supported by the scri
 
 The input file will be named `add.in` (path `inputs/add.in`).
 
-To run this solution issue the command `./checker add.cpp`. This will pipe the input file and print the result on console
+To run this solution issue the command `./shaker add.cpp`. This will pipe the input file and print the result on console
 
-Issuing `./checker add.cpp --expect` will compare the output stream to `expected/add.txt`
+Issuing `./shaker add.cpp --expect` will compare the output stream to `expected/add.txt`
 
 You can try other examples like..
 ```bash
-$ ./checker add.go
-$ ./checker add.py
-$ ./checker add.c
-$ ./checker add.rs
+$ ./shaker add.go
+$ ./shaker add.py
+$ ./shaker add.c
+$ ./shaker add.rs
+```
+
+If a program crashes the script will print the error and exit.
+```bash
+$ ./shaker crash.py
+Traceback....
+...
+FAILURE
 ```
 
 ### You are welcome to make it your own, suggest ideas and contribute to make it better :smile:
