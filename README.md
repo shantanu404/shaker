@@ -1,7 +1,7 @@
 Shaker
 ======
 
-Shaker is a simple _checker_ script for competetive programmers. It compiles and checks your solution with only one command and provides
+Shaker is a simple _checker_ script for competitive programmers. It compiles and checks your solution with only one command and provides
 a little structure to your workspace.
 
 What should be where?
