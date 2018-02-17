@@ -11,17 +11,21 @@ COMPILER = {
         '.rs': 'rustc src/{0}.rs -o bin/{0} && ./bin/{0} < inputs/{0}.in',
         }
 
-def run_solution(filename):
+def run_solution(filename, output):
     try:
         prefix, ext = os.path.splitext(filename)
         prefix = prefix.split('/')[-1]
         compiler_commad = COMPILER[ext].format(prefix)
+        if output:
+            compiler_commad += '> outputs/{0}.out'.format(prefix)
     except(Exception):
         print("Invalid filename")
         return
 
     if not os.path.exists('bin/'):
         os.makedirs('bin/')
+    if not os.path.exists('outputs/'):
+        os.makedirs('outputs/')
 
     print(compiler_commad)
     os.system(compiler_commad)
@@ -31,8 +35,9 @@ def clean_dirs():
     if os.path.exists('bin/'):
         for f in os.listdir('bin/'):
             os.remove('bin/' + f)
-    else:
-        os.makedirs('bin/')
+    if os.path.exists('outputs/'):
+        for f in os.listdir('outputs/'):
+            os.remove('outputs/' + f)
 
 def main():
     parser = ArgumentParser(description='Solution manager for CP.')
@@ -42,6 +47,9 @@ def main():
 
     parser.add_argument('--clean', action='store_true', default=False,
             help='Same as `rm -rf bin/`')
+
+    parser.add_argument('--output', action='store_true', default=False,
+            help='Writes the program output to a file')
 
     args = parser.parse_args()
     if args.clean:
@@ -53,7 +61,7 @@ def main():
         parser.print_help()
         return
 
-    run_solution(solution_file)
+    run_solution(solution_file, args.output)
 
 if __name__ == '__main__':
     main()

@@ -24,11 +24,18 @@ $ ./checker <solution>
 
 It will compile the solution and keep it in `bin` folder which will be created via the `checker`
 
-If you want to get rid of the binaries run,
+If you provide another argument `--output` to the command like this,
+```bash
+$ ./checker <solution> --output
+```
+
+Then it will create a output file in the `outputs` folder
+
+If you want to get rid of the binaries (and the output files) run,
 ```bash
 $ ./checker --clean
 ```
-This will delete the `bin` folder.
+This will delete the `bin` and `outputs` folder.
 
 Example
 -------
@@ -39,7 +46,9 @@ Note that I have also put some examples in other languages supported by the scri
 
 The input file will be named `add.in` (path `inputs/add.in`).
 
-To run this solution issue the command `./checker add.cpp`. This will pipe the input file and print the result on console :smile:
+To run this solution issue the command `./checker add.cpp`. This will pipe the input file and print the result on console
+
+Issuing `./checker add.cpp --output` will save the output stream to `outputs/add.out`
 
 You can try other examples like..
 ```bash
@@ -49,3 +58,4 @@ $ ./checker add.c
 $ ./checker add.rs
 ```
 
+### You are welcome to make it your own, suggest ideas and contribute to make it better :smile:
