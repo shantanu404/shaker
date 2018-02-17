@@ -11,7 +11,9 @@ The directory structure is as follows,
 
 - `inputs` directory contains local test cases. The filename should be `<name>.in`. This file is going to piped into the program via `stdin`.
 
-- The `checker` is used as the build system. It is a python3 program.
+- `expected` directory contains the expected results for the respective test cases in `inputs` directory.
+
+- The `checker` is used as the build system. It is a python3 script.
 
 - `.editorconfig` file is for editorconfig plugin. Go [here](http://editorconfig.org/) for more info.
 
@@ -24,18 +26,18 @@ $ ./checker <solution>
 
 It will compile the solution and keep it in `bin` folder which will be created via the `checker`
 
-If you provide another argument `--output` to the command like this,
+If you provide another argument `--expect` to the command like this,
 ```bash
-$ ./checker <solution> --output
+$ ./checker <solution> --expect
 ```
 
-Then it will create a output file in the `outputs` folder
+then it will match the results of the solution to the expected result in `expected/<solution>.txt`
 
-If you want to get rid of the binaries (and the output files) run,
+If you want to get rid of the binaries run,
 ```bash
 $ ./checker --clean
 ```
-This will delete the `bin` and `outputs` folder.
+This will delete the `bin` folder.
 
 Example
 -------
@@ -48,7 +50,7 @@ The input file will be named `add.in` (path `inputs/add.in`).
 
 To run this solution issue the command `./checker add.cpp`. This will pipe the input file and print the result on console
 
-Issuing `./checker add.cpp --output` will save the output stream to `outputs/add.out`
+Issuing `./checker add.cpp --expect` will compare the output stream to `expected/add.txt`
 
 You can try other examples like..
 ```bash

@@ -1,43 +1,93 @@
 #!/usr/bin/env python3
 import os
+import subprocess
 import shutil
 from argparse import ArgumentParser
 
-COMPILER = {
-        '.c': 'gcc -Wall -Wextra -g -o bin/{0} src/{0}.c && ./bin/{0} < inputs/{0}.in',
-        '.cpp': 'g++ -std=c++11 -Wall -Wextra -g -o bin/{0} src/{0}.cpp && ./bin/{0} < inputs/{0}.in',
-        '.py': 'python src/{0}.py < inputs/{0}.in',
-        '.go': 'go run src/{0}.go < inputs/{0}.in',
-        '.rs': 'rustc src/{0}.rs -o bin/{0} && ./bin/{0} < inputs/{0}.in',
+COMPILE = {
+        '.c': 'gcc -Wall -Wextra -g -o bin/{0} src/{0}.c',
+        '.cpp': 'g++ -std=c++11 -Wall -Wextra -g -o bin/{0} src/{0}.cpp',
+        '.rs': 'rustc src/{0}.rs -o bin/{0}',
         }
 
-def run_solution(filename, output):
-    try:
-        prefix, ext = os.path.splitext(filename)
-        prefix = prefix.split('/')[-1]
-        compiler_commad = COMPILER[ext].format(prefix)
-        if output:
-            compiler_commad += '> outputs/{0}.out'.format(prefix)
-    except(Exception):
-        print("Invalid filename")
-        return
+RUN = {
+        '.py': 'python src/{0}.py',
+        '.go': 'go run src/{0}.go',
+        '.other': 'bin/{0}'
+        }
 
+def run_solution(filename, expect):
     if not os.path.exists('bin/'):
         os.makedirs('bin/')
-    if not os.path.exists('outputs/'):
-        os.makedirs('outputs/')
 
-    print(compiler_commad)
-    os.system(compiler_commad)
+    try:
+        if not os.path.exists(filename):
+            print("Invalid file!")
+            return
+
+        prefix, ext = os.path.splitext(filename)
+        prefix = prefix.split('/')[-1]
+
+        if ext in ['.c', '.cpp', '.rs']:
+            compiler_commad = COMPILE[ext].format(prefix)
+            try:
+                subprocess.run(compiler_commad, shell=True, check=True)
+                print('Compiled!')
+            except subprocess.CalledProcessError as e:
+                print(e)
+                return
+
+        outputfile = subprocess.PIPE
+        inputfile = open('inputs/{0}.in'.format(prefix))
+
+        if ext in ['.py', '.go']:
+            program = RUN[ext].format(prefix)
+        else:
+            program = RUN['.other'].format(prefix)
+
+        process = subprocess.Popen(program.split(' '),
+                stdin=inputfile,
+                stdout=outputfile)
+
+        while process.poll() is None:
+            pass
+
+        if process.returncode != 0:
+            print("\nFAILURE")
+            return
+
+        content = process.stdout.read().decode()
+
+        print('Output: ')
+        print('========')
+        print(content)
+
+        if expect:
+            print('Matching...')
+            try:
+                expected = open('expected/{0}.txt'.format(prefix)).read()
+                if expected == content:
+                    print('SUCCESS')
+                else:
+                    print('WRONG ANSWER')
+                    print('\nExpected:')
+                    print('=========')
+                    print(expected)
+
+            except Exception as e:
+                print(e)
+
+
+    except Exception as e:
+        print(e)
+        return
 
 
 def clean_dirs():
     if os.path.exists('bin/'):
         for f in os.listdir('bin/'):
             os.remove('bin/' + f)
-    if os.path.exists('outputs/'):
-        for f in os.listdir('outputs/'):
-            os.remove('outputs/' + f)
+        shutil.rmtree('bin/')
 
 def main():
     parser = ArgumentParser(description='Solution manager for CP.')
@@ -48,7 +98,7 @@ def main():
     parser.add_argument('--clean', action='store_true', default=False,
             help='Same as `rm -rf bin/`')
 
-    parser.add_argument('--output', action='store_true', default=False,
+    parser.add_argument('--expect', action='store_true', default=False,
             help='Writes the program output to a file')
 
     args = parser.parse_args()
@@ -61,7 +111,7 @@ def main():
         parser.print_help()
         return
 
-    run_solution(solution_file, args.output)
+    run_solution(solution_file, args.expect)
 
 if __name__ == '__main__':
     main()
